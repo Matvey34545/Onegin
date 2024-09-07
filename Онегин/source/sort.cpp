@@ -1,9 +1,10 @@
 #include "sort.h"
 
 #include <stdlib.h>
-#include <stdint.h>
 
-void quick_sort(void* ptr, size_t number_element, size_t size_element, bool (*func_comparison)(void*, void*, size_t))
+static void swap(void* elem1, void* elem2, size_t size_element);
+
+void quick_sort(void* ptr, size_t number_element, size_t size_element, bool (*func_comparison)(const void*, const void*, size_t))
 {
     if (number_element <= 1)
         return;
@@ -39,7 +40,7 @@ void quick_sort(void* ptr, size_t number_element, size_t size_element, bool (*fu
 
 }
 
-void swap(void* elem1, void* elem2, size_t size_element)
+static void swap(void* elem1, void* elem2, size_t size_element)
 {
     char temp;
     for ( int i = 0; i < size_element; i++ )
@@ -49,24 +50,4 @@ void swap(void* elem1, void* elem2, size_t size_element)
         *((char*)elem2 + i) = temp;
     }
 }
-
-bool comparison_unsigned(void* elem1, void* elem2, size_t size_element)
-{
-    bool result = true;
-    for (int i = size_element - 1; i > -1; i--)
-    {
-        if ( *((uint8_t*)elem1 + i) > *((uint8_t*)elem2 + i) )
-        {
-            result = true;
-            break;
-        }
-        if ( *((uint8_t*)elem1 + i) < *((uint8_t*)elem2 + i) )
-        {
-            result = false;
-            break;
-        }
-    }
-    return result;
-}
-
 
