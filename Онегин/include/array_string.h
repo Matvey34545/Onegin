@@ -7,7 +7,9 @@ enum ErrorOnegin
 {
     ERROR_NO         = 0,
     ERROR_NO_FILE    = 1,
-    ERROR_ALLOCATION = 2
+    ERROR_ALLOCATION = 2,
+    ERROR_FLAG       = 3,
+    ERROR_WRITE      = 4
 };
 
 struct MyFile
@@ -16,13 +18,20 @@ struct MyFile
     long int size;
 };
 
+struct String
+{
+    char* str;
+    int len;
+};
+
 struct ArrayPtr
 {
-    char **ptr;
+    String *ptr;
     int size;
 };
 
-ErrorOnegin write_on_file(const char* filename, MyFile *file);
+ErrorOnegin read_on_file(const char* filename, MyFile *file);
 ErrorOnegin create_array_ptr(MyFile *file, ArrayPtr *array_ptr);
+ErrorOnegin write_on_file(const char* filename, ArrayPtr *array_ptr);
 
 #endif

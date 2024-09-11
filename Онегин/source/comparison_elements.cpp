@@ -3,13 +3,14 @@
 #include <ctype.h>
 #include <stdint.h>
 #include "comparison_elements.h"
+#include "array_string.h"
 
 bool MyStrcpm(const void *s1, const void *s2, size_t size_element)
 {
     char temp1 = 'a';
     char temp2 = 'a';
-    char *ptr_s1 = *(char**)s1;
-    char *ptr_s2 = *(char**)s2;
+    char *ptr_s1 = ((String*)s1)->str;
+    char *ptr_s2 = ((String*)s2)->str;
 
     while( *ptr_s1 != '\0' && *ptr_s2 != '\0' )
     {
