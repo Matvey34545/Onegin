@@ -7,11 +7,8 @@
 
 struct Flags
 {
-    bool is_back_sort;
-    bool is_mysort;
-    bool is_flag_o;
-    bool is_source_file;
-    bool is_format_file;
+    int (*func_comparison)(const void*, const void*);
+    void (*func_sort)(void*, size_t, size_t, int (*func_comparison)(const void*, const void*));
     const char *source_file;
     const char *format_file;
 };

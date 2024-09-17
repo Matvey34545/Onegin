@@ -9,6 +9,8 @@
 
 #define NDEBUG
 
+static int count_lines(const MyFile *file);
+
 ErrorOnegin read_on_file(const char* filename, MyFile *file)
 {
     assert(file != NULL);
@@ -36,15 +38,7 @@ ErrorOnegin create_array_ptr(MyFile *file, ArrayPtr *array_ptr)
     assert(file != NULL);
     assert(array_ptr != NULL);
 
-    char *ptr = file->ptr_str;
-
-    int count = 1;
-    for (int i = 0; i < file->size; i++)
-    {
-        if (*(ptr + i) == '\n')
-            count++;
-    }
-    array_ptr->size = count;
+    array_ptr->size = count_lines(file);
     array_ptr->ptr = (String*)calloc(array_ptr->size, sizeof(String));
     if (array_ptr->ptr == NULL)
         return ERROR_ALLOCATION;
@@ -102,10 +96,25 @@ ErrorOnegin write_on_file(const char* filename, const ArrayPtr *array_ptr, const
     return ERROR_NO;
 }
 
-void destroy_arrays(ArrayPtr *array_ptr, MyFile *file)
+void destroy_arrays(MyFile *file)
 {
     free(file->ptr_str);
+}
+
+void destroy_arrays_ptr(ArrayPtr *array_ptr)
+{
     free(array_ptr->ptr);
+}
+
+static int count_lines(const MyFile *file)
+{
+    int count = 1;
+    for (int i = 0; i < file->size; i++)
+    {
+        if (*(file->ptr_str + i) == '\n')
+            count++;
+    }
+    return count;
 }
 
 

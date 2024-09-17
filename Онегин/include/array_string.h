@@ -33,6 +33,7 @@ struct ArrayPtr
 ErrorOnegin read_on_file(const char* filename, MyFile *file);
 ErrorOnegin create_array_ptr(MyFile *file, ArrayPtr *array_ptr);
 ErrorOnegin write_on_file(const char* filename, const ArrayPtr *array_ptr, const MyFile *file);
-void destroy_arrays(ArrayPtr *array_ptr, MyFile *file);
+void destroy_arrays(MyFile *file);
+void destroy_arrays_ptr(ArrayPtr *array_ptr);
 
 #endif
