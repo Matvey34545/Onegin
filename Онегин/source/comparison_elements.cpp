@@ -5,10 +5,10 @@
 #include "comparison_elements.h"
 #include "array_string.h"
 
-bool MyStrcpm(const void *s1, const void *s2, size_t size_element)
+int MyStrcpm(const void *s1, const void *s2)
 {
-    char temp1 = 'a';
-    char temp2 = 'a';
+    char temp1 = '\0';
+    char temp2 = '\0';
     char *ptr_s1 = ((String*)s1)->str;
     char *ptr_s2 = ((String*)s2)->str;
 
@@ -26,10 +26,10 @@ bool MyStrcpm(const void *s1, const void *s2, size_t size_element)
             temp2 = tolower(*ptr_s2);
 
             if (temp1 > temp2)
-                return true;
+                return 1;
 
             if (temp2 > temp1)
-                return false;
+                return -1;
 
             ptr_s1++;
             ptr_s2++;
@@ -38,30 +38,57 @@ bool MyStrcpm(const void *s1, const void *s2, size_t size_element)
     if (*ptr_s1 == '\0')
     {
         if (*ptr_s2 == '\0')
-            return true;
+            return 0;
 
-        return false;
+        return -1;
     }
     if (*ptr_s2 == '\0')
-        return true;
+        return 1;
 }
 
-bool comparison_unsigned(const void* elem1, const void* elem2, size_t size_element)
+int back_my_strcpm(const void *s1, const void *s2)
 {
-    bool result = true;
-    for (int i = size_element - 1; i > -1; i--)
+    char temp1 = 'a';
+    char temp2 = 'a';
+
+    String *ptr_s1 = (String*)s1;
+    String *ptr_s2 = (String*)s2;
+    char *ptr_s1_end = ptr_s1->str + ptr_s1->len - 1;
+    char *ptr_s2_end = ptr_s2->str + ptr_s2->len - 1;
+
+    int count2 = 0;
+    int count1 = 0;
+
+    while(count1 < ptr_s1->len && count2 < ptr_s2->len)
     {
-        if ( *((char*)elem1 + i) > *((char*)elem2 + i) )
-        {
-            result = true;
-            break;
-        }
-        if ( *((char*)elem1 + i) < *((char*)elem2 + i) )
-        {
-            result = false;
-            break;
-        }
+        while(!isalpha(*(ptr_s1_end - count1)) && count1 < ptr_s1->len)
+            count1++;
+
+        while(!isalpha(*(ptr_s2_end - count2)) && count2 < ptr_s2->len)
+            count2++;
+
+        temp1 = tolower(*(ptr_s1_end - count1));
+        temp2 = tolower(*(ptr_s2_end - count2));
+
+        if (temp1 > temp2)
+            return 1;
+
+        if (temp2 > temp1)
+            return -1;
+
+        count1++;
+        count2++;
     }
-    return result;
+    if (count1 == ptr_s1->len)
+    {
+        if (count2 == ptr_s2->len)
+            return 0;
+
+        return -1;
+    }
+    if (count2 == ptr_s2->len)
+        return 1;
 }
+
+
 

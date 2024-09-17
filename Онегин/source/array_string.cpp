@@ -2,36 +2,43 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <string.h>
 #include <assert.h>
+
+#define NDEBUG
 
 ErrorOnegin read_on_file(const char* filename, MyFile *file)
 {
-    FILE *fp = fopen(filename, "r");
-    if (fp == NULL)
-    {
-        fclose( fp);
-        return ERROR_NO_FILE;
-    }
-    fseek(fp, 0, SEEK_END);
-    file->size = ftell(fp) + 1;
-    rewind(fp);
+    assert(file != NULL);
+    struct stat st = {};
+    stat(filename, &st);
+    file->size = st.st_size + 1;
 
     file->ptr_str = (char*)calloc(file->size, sizeof(char));
     if (file->ptr_str == NULL)
-    {
-        fclose( fp);
         return ERROR_ALLOCATION;
-    }
 
-    fread(file->ptr_str, sizeof(char), file->size - 1, fp);
+    FILE *fp = fopen(filename, "rb");
+    if (fp == NULL)
+        return ERROR_NO_FILE;
+
+    size_t ret_fread = fread(file->ptr_str, sizeof(char), file->size - 1, fp);
+
     fclose(fp);
+
     return ERROR_NO;
 }
 
 ErrorOnegin create_array_ptr(MyFile *file, ArrayPtr *array_ptr)
 {
+    assert(file != NULL);
+    assert(array_ptr != NULL);
+
     char *ptr = file->ptr_str;
-    int count = ( file->size ) ? 1 : 0;
+
+    int count = 1;
     for (int i = 0; i < file->size; i++)
     {
         if (*(ptr + i) == '\n')
@@ -65,39 +72,40 @@ ErrorOnegin create_array_ptr(MyFile *file, ArrayPtr *array_ptr)
     return ERROR_NO;
 }
 
-ErrorOnegin write_on_file(const char* filename, ArrayPtr *array_ptr)
+ErrorOnegin write_on_file(const char* filename, const ArrayPtr *array_ptr, const MyFile *file)
 {
-    FILE *fn = fopen( filename, "a");
-    assert (fn);
-    fprintf( stderr, "opened\n");
-    if ( !fn )
-    {
-        printf( "error\n");
-        return ERROR_NO_FILE;
-    }
-    fprintf( stderr, "ready to print\n");
-    fprintf( stderr, "fprintf: %d\n", fprintf( fn, "new word"));
-    fprintf( stderr, "printed\n");
-    fclose( fn);
-    return ERROR_NO;
-    FILE *fp = fopen(filename, "w");
+    assert(array_ptr != NULL);
+    assert(file != NULL);
+
+    FILE *fp = fopen(filename, "wb");
     if (fp == NULL)
-        return ERROR_NO_FILE;
+        fp = fopen("format_onegin.txt", "wb");
 
-    for ( int i = 0; i < array_ptr->size; i++)
-        printf("%s\n", (array_ptr->ptr + i)->str);
+    char* buffer = (char*)calloc(file->size, sizeof(char));
+    if (buffer == NULL)
+        return ERROR_ALLOCATION;
 
-    for ( int i = 0; i < array_ptr->size; i++)
+    char* temp = buffer;
+    for (int i = 0; i < array_ptr->size; i++)
     {
-        fprintf( stderr, "try str: %s\n", array_ptr->ptr[i].str);
-        int error = 0; //fputs(array_ptr->ptr[i].str, fp);
-        fprintf( fp, "test str\n");
-        fprintf( stderr, "written str: %s\n", array_ptr->ptr[i].str);
-        if (error == EOF)
-            return ERROR_WRITE;
+        strncpy(temp, (array_ptr->ptr + i)->str, (array_ptr->ptr + i)->len);
+        if (i != array_ptr->size - 1)
+            *(temp + (array_ptr->ptr + i)->len - 1) = '\n';
+        temp += (array_ptr->ptr + i)->len;
     }
+
+    int error = fputs(buffer, fp);
+    free(buffer);
+    if (error == EOF)
+        return ERROR_WRITE;
     fclose(fp);
     return ERROR_NO;
+}
+
+void destroy_arrays(ArrayPtr *array_ptr, MyFile *file)
+{
+    free(file->ptr_str);
+    free(array_ptr->ptr);
 }
 
 

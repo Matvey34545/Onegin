@@ -4,7 +4,7 @@
 
 static void swap(void* elem1, void* elem2, size_t size_element);
 
-void quick_sort(void* ptr, size_t number_element, size_t size_element, bool (*func_comparison)(const void*, const void*, size_t))
+void quick_sort(void* ptr, size_t number_element, size_t size_element, int (*func_comparison)(const void*, const void*))
 {
     if (number_element <= 1)
         return;
@@ -18,17 +18,17 @@ void quick_sort(void* ptr, size_t number_element, size_t size_element, bool (*fu
 
     while(right > left)
     {
-        while(!func_comparison(left, ptr, size_element) && left != right)
+        while(func_comparison(left, ptr) < 0 && left != right)
             left += size_element;
 
-        while(func_comparison(right, ptr, size_element) && right != left)
+        while(func_comparison(right, ptr) >= 0 && right != left)
             right -= size_element;
 
         swap(left, right, size_element);
     }
 
 
-    if (func_comparison(right, ptr, size_element))
+    if (func_comparison(right, ptr) >= 0)
         swap(ptr, right - size_element, size_element);
 
     else
@@ -42,12 +42,27 @@ void quick_sort(void* ptr, size_t number_element, size_t size_element, bool (*fu
 
 static void swap(void* elem1, void* elem2, size_t size_element)
 {
-    char temp;
-    for ( int i = 0; i < size_element; i++ )
+    const int size_long_long_int = sizeof(long long int);
+    while(size_element >= size_long_long_int)
     {
-        temp = *((char*)elem1 + i);
-        *((char*)elem1 + i) = *((char*)elem2 + i);
-        *((char*)elem2 + i) = temp;
+        long long int long_temp = 0;
+        long_temp = *((long long int*)elem1);
+        *((long long int*)elem1) = *((long long int*)elem2);
+        *((long long int*)elem2) = long_temp;
+        size_element -= size_long_long_int;
+        elem1 += size_long_long_int;
+        elem2 += size_long_long_int;
+    }
+
+    while(size_element > 0)
+    {
+        char temp = '\0';
+        temp = *((char*)elem1);
+        *((char*)elem1) = *((char*)elem2);
+        *((char*)elem2) = temp;
+        size_element -= 1;
+        elem1 += 1;
+        elem2 += 1;
     }
 }
 

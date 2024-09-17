@@ -8,14 +8,21 @@ ErrorOnegin read_command_line(char **argv, int argc, Flags *flags)
     argv++;
     while (argc > 1)
     {
-        if (strcmp(*argv, "myqsort") == 0)
+        if (strcmp(*argv, "-back") == 0)
+        {
+            flags->is_back_sort = true;
+            argc--;
+            argv++;
+            continue;
+        }
+        if (strcmp(*argv, "-myqsort") == 0)
         {
             flags->is_mysort = true;
             argc--;
             argv++;
             continue;
         }
-        if (strcmp(*argv, "o") == 0)
+        if (strcmp(*argv, "-o") == 0)
         {
             if (argc < 3)
                 return ERROR_FLAG;
@@ -32,6 +39,7 @@ ErrorOnegin read_command_line(char **argv, int argc, Flags *flags)
         argc--;
         argv++;
     }
+
     return ERROR_NO;
 }
 

@@ -7,6 +7,7 @@
 
 struct Flags
 {
+    bool is_back_sort;
     bool is_mysort;
     bool is_flag_o;
     bool is_source_file;
