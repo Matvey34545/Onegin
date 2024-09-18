@@ -1,6 +1,7 @@
 #include "sort.h"
 
 #include <stdlib.h>
+#include <stdio.h>
 
 static void swap(void* elem1, void* elem2, size_t size_element);
 
@@ -9,7 +10,7 @@ void quick_sort(void* ptr, size_t number_element, size_t size_element, int (*fun
     if (number_element <= 1)
         return;
 
-    int pivot = rand() % (number_element - 1);
+    int pivot = rand() % number_element;
 
     void *left = ptr + size_element;
     void *right = ptr + (number_element - 1) * size_element;
@@ -38,6 +39,21 @@ void quick_sort(void* ptr, size_t number_element, size_t size_element, int (*fun
     quick_sort(ptr, first_size, size_element, func_comparison);
     quick_sort(right, number_element - first_size, size_element, func_comparison);
 
+}
+
+void random_sort(void* ptr, size_t number_element, size_t size_element, int (*func_comparison)(const void*, const void*))
+{
+    printf("This sorting is the most accurate. Unfortunately,"
+           " the speed of work will have to pay for accuracy. "
+           "In the meantime, make yourself some tea and wait. The result will surprise you.\n");
+
+    for (long long int i = 0; i < number_element * number_element * number_element; i++)
+    {
+        int number1 = rand() % number_element;
+        int number2 = rand() % number_element;
+        if (func_comparison(ptr + number1 * size_element, ptr + number2 * size_element) == 1)
+            swap(ptr + number1 * size_element, ptr + number2 * size_element, size_element);
+    }
 }
 
 static void swap(void* elem1, void* elem2, size_t size_element)

@@ -26,6 +26,13 @@ ErrorOnegin read_command_line(char **argv, int argc, Flags *flags)
             argv++;
             continue;
         }
+        if (strcmp(*argv, "-r") == 0)
+        {
+            flags->func_sort = random_sort;
+            argc--;
+            argv++;
+            continue;
+        }
         if (strcmp(*argv, "-o") == 0)
         {
             if (argc < 3)

@@ -87,7 +87,6 @@ ErrorOnegin write_on_file(const char* filename, const ArrayPtr *array_ptr, const
             *(temp + (array_ptr->ptr + i)->len - 1) = '\n';
         temp += (array_ptr->ptr + i)->len;
     }
-
     int error = fputs(buffer, fp);
     free(buffer);
     if (error == EOF)
